@@ -1,8 +1,7 @@
 /* SERVER - may be enhanced to work for multiple clients */
-import jdk.incubator.concurrent.ScopedValue;
-
 import java.net.*;
 import java.io.*;
+import java.nio.Buffer;
 
 public class NetworkingServer {
     public static void main(String[] args) {
@@ -27,7 +26,42 @@ public class NetworkingServer {
 
         // Wait for the data from the client and reply
         while (true) {
+            try {
+                // Listens for a connection to be made to
+                // this socket and accepts it. The method blocks
+                // a connection is made
+                System.out.println("Waiting for connect request...");
+                client = server.accept();
 
+                System.out.println("Connect request is accepted...");
+                String clientHost = client.getInetAddress().getHostAddress();
+                int clientPort = client.getPort();
+                System.out.println("Client host = " + clientHost + " Client port = " + clientPort);
+
+                // Read data from the client
+                InputStream clientIn = client.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(clientIn));
+                String msgFromClient = br.readLine();
+                System.out.println("Message recieved from client = " + msgFromClient);
+
+                // Send response to the client
+                if (msgFromClient != null && !msgFromClient.equalsIgnoreCase("bye")) {
+                    OutputStream clientOut = client.getOutputStream();
+                    PrintWriter pw = new PrintWriter(clientOut, true);
+                    String ansMsg = "Hello, " + msgFromClient;
+                    pw.println(ansMsg);
+                }
+
+                // Close sockets
+                if (msgFromClient != null && msgFromClient.equalsIgnoreCase("bye")) {
+                    server.close();
+                    client.close();
+                    break;
+                }
+
+            } catch (IOException ie) {
+
+            }
         }
     }
 }
