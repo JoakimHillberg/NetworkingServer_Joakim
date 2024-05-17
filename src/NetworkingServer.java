@@ -1,7 +1,6 @@
 /* SERVER - may be enhanced to work for multiple clients */
 import java.net.*;
 import java.io.*;
-import java.nio.Buffer;
 
 public class NetworkingServer {
     public static void main(String[] args) {
@@ -60,7 +59,7 @@ public class NetworkingServer {
                 }
 
             } catch (IOException ie) {
-
+                System.out.println("I/O error " + ie);
             }
         }
     }
